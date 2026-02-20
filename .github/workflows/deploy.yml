@@ -1,0 +1,34 @@
+name: IDP Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: "Deployment Target"
+        required: true
+        default: "docker"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Docker Deployment
+        if: ${{ github.event.inputs.deploy_target == 'docker' }}
+        run: |
+          docker build -t idp-demo .
+          docker run -d -p 8080:80 idp-demo
+
+      - name: GitHub Pages Deployment
+        if: ${{ github.event.inputs.deploy_target == 'pages' }}
+        run: echo "Simulated GitHub Pages deployment"
+
+      - name: Baremetal Simulation
+        if: ${{ github.event.inputs.deploy_target == 'baremetal' }}
+        run: echo "Simulated Baremetal deployment"
+
+      - name: Kubernetes Simulation
+        if: ${{ github.event.inputs.deploy_target == 'k8s' }}
+        run: echo "Simulated Kubernetes deployment"
